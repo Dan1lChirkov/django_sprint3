@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}
-{{ post.title }} | {% if post.location and post.location.is_published %}{{ post.location.name }} |{% endif %} {{ post.pub_date|date:"d E Y" }}
+  {{ post.title }} | {% if post.location and post.location.is_published %}{{ post.location.name }} |{% endif %} {{ post.pub_date|date:"d E Y" }}
 {% endblock %}
 {% block content %}
   <article>

@@ -1,23 +1,29 @@
 from django.shortcuts import render, get_object_or_404
 
-from blog.models import Post, Category
-
 from django.db.models.functions import Now
 
 from django.db.models import Q
 
+from blog.models import Post, Category
+
+max_posts_num: int = 5
+
+post_filter = {
+    'is_published': True,
+    'category__is_published': True
+}
+
 
 def index(request):
     tempalte = 'blog/index.html'
-    post_list = Post.objects.select_related(
+    posts = Post.objects.select_related(
         'category',
         'location'
     ).filter(
+        **post_filter,
         pub_date__lte=Now(),
-        is_published=True,
-        category__is_published=True
-    ).order_by('-created_at')[:5]
-    context = {'post_list': post_list}
+    ).order_by('-created_at')[:max_posts_num]
+    context = {'posts': posts}
     return render(request, tempalte, context)
 
 
@@ -41,17 +47,16 @@ def category_posts(request, category_slug):
         ),
         is_published=True,
         slug=category_slug)
-    post_list = Post.objects.select_related(
+    posts = Post.objects.select_related(
         'category',
         'location'
     ).filter(
+        **post_filter,
         category__slug=category_slug,
-        is_published=True,
         pub_date__lte=Now(),
-        category__is_published=True
     )
     context = {
         'category': category,
-        'post_list': post_list
+        'posts': posts,
     }
     return render(request, template, context)
